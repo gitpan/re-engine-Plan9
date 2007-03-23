@@ -6,7 +6,7 @@ use vars qw($VERSION);
 
 BEGIN
 {
-    $VERSION = '0.01';
+    $VERSION = '0.02';
     XSLoader::load __PACKAGE__, $VERSION;
 }
 
@@ -46,6 +46,14 @@ Replaces perl's regexes in a given lexical scope with Plan9 regular
 expression provided by libregexp9. libregexp9 and the libraries it
 depends on are shipped with the module.
 
+The C</s>> flag causes C<.> to match a newline (C<regcompnl>) and the
+C</x> flag allegedly causes all characters to be treated literally
+(C<regcomplit>), see regexp9(3). No other flags have special meaning
+to this engine.
+
+If an invalid pattern is supplied perl will die with an error from
+regerror(3).
+
 =head1 CAVEATS
 
 The Plan 9 engine expects the user to supply a pre-allocated buffer to
@@ -55,16 +63,32 @@ variables are allocated for every pattern match (includes C<< $& >> so
 they go up to C<< $49 >>). Patches that fix the supplied libregexp9 so
 that it provides this information to its caller welcome.
 
-=head1 BUGS
-
-C<//g> will make perl do naughty things, fix.
-
-The build system builds the F<lib*> stuff at C<< perl Makefile.PL >>
-time rather than C<< make >> time. Due for a fix.
-
 =head1 SEE ALSO
 
+=over 4
+
+=item regexp9(7) - Plan 9 regular expression notation
+
+L<http://swtch.com/plan9port/unix/man/regexp97.html>
+
+=item regexp9(3) - regcomp, regexec etc.
+
+L<http://swtch.com/plan9port/unix/man/regexp93.html>
+
+=item Unix Software from Plan 9
+
 L<http://swtch.com/plan9port/unix/>
+
+=item An article by Russ Cox applicable to before the release of this library:)
+
+L<http://swtch.com/~rsc/regexp/regexp1.html>
+
+=back
+
+=head1 THANKS
+
+Rafael Kitover (RKITOVER) for the C<< postamble >> F<Makefile.PL>
+section that builds the Plan 9 libraries at C<< make >> time.
 
 =head1 AUTHOR
 
@@ -76,5 +100,20 @@ Copyright 2007 E<AElig>var ArnfjE<ouml>rE<eth> Bjarmason.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
+
+The included libutf, libfmt and libregexp9 libraries are provided
+under the following license:
+
+    The authors of this software are Rob Pike and Ken Thompson.
+                 Copyright (c) 2002 by Lucent Technologies.
+    Permission to use, copy, modify, and distribute this software for any
+    purpose without fee is hereby granted, provided that this entire notice
+    is included in all copies of any software which is or includes a copy
+    or modification of this software and in all copies of the supporting
+    documentation for such software.
+    THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR IMPLIED
+    WARRANTY.  IN PARTICULAR, NEITHER THE AUTHORS NOR LUCENT TECHNOLOGIES MAKE ANY
+    REPRESENTATION OR WARRANTY OF ANY KIND CONCERNING THE MERCHANTABILITY
+    OF THIS SOFTWARE OR ITS FITNESS FOR ANY PARTICULAR PURPOSE.
 
 =cut

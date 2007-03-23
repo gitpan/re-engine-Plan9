@@ -1,3 +1,14 @@
-2007-03-21 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.01)
+2007-03-23 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.02)
 
-	* Initial release	
+	* Plan9.xs: Make s/// work
+	* Plan9.xs: Correctly report regcomp errors
+	* Plan9.xs: Map /s and /x to regcompnl and regcomplit
+	* Plan9.pm: Updated docs to match code changes
+	* Plan9.pm: Including the Plan9 Lucent license notice
+	* t/s.t: More s/// tests
+	* Makefile.PL: Fixes to build the Plan 9 libs by Rafael Kitover
+	* Makefile.PL: Document dependency on XSLoader
+
+2007-03-22 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.01)
+
+	* Initial release

@@ -40,6 +40,7 @@ libfmt/Make.OSF1-alpha
 libfmt/Make.SunOS-sun4u
 libfmt/Make.SunOS-sun4u-cc
 libfmt/Make.SunOS-sun4u-gcc
+libfmt/Makefile
 libfmt/nan.h
 libfmt/nan64.c
 libfmt/NOTICE
@@ -80,6 +81,7 @@ libregexp/Make.OSF1-alpha
 libregexp/Make.SunOS-sun4u
 libregexp/Make.SunOS-sun4u-cc
 libregexp/Make.SunOS-sun4u-gcc
+libregexp/Makefile
 libregexp/NOTICE
 libregexp/README
 libregexp/regaux.c
@@ -107,6 +109,7 @@ libutf/Make.OSF1-alpha
 libutf/Make.SunOS-sun4u
 libutf/Make.SunOS-sun4u-cc
 libutf/Make.SunOS-sun4u-gcc
+libutf/Makefile
 libutf/NOTICE
 libutf/plan9.h
 libutf/README
@@ -143,6 +146,7 @@ Plan9.pm
 Plan9.xs
 t/00-compile.t
 t/capture.t
+t/flags.t
 t/match.t
 t/qr.t
 t/s.t

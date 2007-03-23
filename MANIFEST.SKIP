@@ -3,7 +3,10 @@
 ^lib.*/.*\.a$
 
 ^MANIFEST\.bak$
-Makefile$
+^Makefile$
+^Makefile\.old$
+
+^contrib
 
 \.#
 tar\.gz$

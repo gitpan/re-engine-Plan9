@@ -17,17 +17,17 @@ END_EXTERN_C
 regexp *
 Plan9_comp(pTHX_ char *exp, char *xend, PMOP *pm)
 {
-    /* perl regex struct */
     register regexp *r;
-
-    /* pregcomp vars */
-    Reprog *re;
+    register Reprog *re;
 
     /* regex structure for perl */
     Newxz(r,1,regexp);
 
     /* have the regex handled by the Plan9 engine */
     r->engine = &engine_plan9;
+
+    /* Store the initial flags */
+    r->intflags = pm->op_pmflags;
 
     /* don't destroy us! */
     r->refcnt = 1;
@@ -36,7 +36,7 @@ Plan9_comp(pTHX_ char *exp, char *xend, PMOP *pm)
     r->prelen = xend - exp;
     r->precomp = SAVEPVN(exp, r->prelen);
 
-    /* */
+    /* Set up qr// stringification */
     r->wraplen = r->prelen;
     Newx(r->wrapped, r->wraplen, char);
     Copy(r->precomp, r->wrapped, r->wraplen, char);
@@ -44,11 +44,15 @@ Plan9_comp(pTHX_ char *exp, char *xend, PMOP *pm)
     /* Store the flags as perl expects them */
     r->extflags = pm->op_pmflags & RXf_PMf_COMPILETIME;
 
-    re = regcomp(r->precomp);
+    if (r->intflags & PMf_EXTENDED) 
+        re = regcomplit(r->precomp);  /* /x */
+    if (r->intflags & PMf_SINGLELINE)
+        re = regcompnl(r->precomp);   /* /s */
+    else
+        re = regcomp(r->precomp);     /* / */
 
-    if (re == NULL) {
-        croak("Can't allocate memory for regcomp");
-    }
+    if (re == 0)
+        croak("Error in regcomp");
 
     /* Save our re */
     r->pprivate = re;
@@ -75,21 +79,30 @@ Plan9_exec(pTHX_ register regexp *r, char *stringarg, register char *strend,
     I32 i;
     char *s, *e;
     char *startpos = stringarg;
+    bool g = r->intflags & PMf_GLOBAL ? 1 : 0;
 
     re = r->pprivate;
 
-    r->startp[0] = startpos;
-
     memset(match, 0, msize*sizeof(Resub));
 
-    /* TODO: handle failed matches */
     ret = regexec(re, stringarg, match, msize);
 
     /* Explicitly documented to return 1 on success */
     if (ret != 1) 
         return 0;
 
-    for (i = 0; match[i].s.sp; i++) {
+    /*
+     * in C<< s/// >> or C<< m// >>
+     */
+    if (g) {
+        r->startp[0] = stringarg - strbeg;
+        r->endp[0]   = r->startp[0] + (match[0].e.ep - match[0].s.sp);
+    }
+
+    /*
+     * Don't mess with startp/endp 0 under /g
+     */
+    for (i = g ? 1 : 0; match[i].s.sp; i++) {
         s = match[i].s.sp;
         e = match[i].e.ep;
 
