@@ -6,7 +6,7 @@ use vars qw($VERSION);
 
 BEGIN
 {
-    $VERSION = '0.02';
+    $VERSION = '0.03';
     XSLoader::load __PACKAGE__, $VERSION;
 }
 
@@ -62,6 +62,11 @@ how many match variables the pattern needs. Currently 50 match
 variables are allocated for every pattern match (includes C<< $& >> so
 they go up to C<< $49 >>). Patches that fix the supplied libregexp9 so
 that it provides this information to its caller welcome.
+
+=head1 BUGS
+
+Some of the semantics of C<< //g >> and C<< s/// >> are broken, see
+failing tests for reference.
 
 =head1 SEE ALSO
 

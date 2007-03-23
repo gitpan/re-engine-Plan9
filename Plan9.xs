@@ -36,7 +36,9 @@ Plan9_comp(pTHX_ char *exp, char *xend, PMOP *pm)
     r->prelen = xend - exp;
     r->precomp = SAVEPVN(exp, r->prelen);
 
-    /* Set up qr// stringification */
+    /* Set up qr// stringification to be equivalent to the supplied
+     * pattern
+     */
     r->wraplen = r->prelen;
     Newx(r->wrapped, r->wraplen, char);
     Copy(r->precomp, r->wrapped, r->wraplen, char);
@@ -64,7 +66,6 @@ Plan9_comp(pTHX_ char *exp, char *xend, PMOP *pm)
     Newxz(r->startp, 1+(U32)50, I32);
     Newxz(r->endp, 1+(U32)50, I32);
 
-    /* return the regexp structure to perl */
     return r;
 }
 
@@ -72,7 +73,7 @@ I32
 Plan9_exec(pTHX_ register regexp *r, char *stringarg, register char *strend,
                   char *strbeg, I32 minend, SV *sv, void *data, U32 flags)
 {
-    Reprog *re;
+    register const Reprog *re = r->pprivate;
     Resub match[50];
     int msize = 50;
     int ret;
@@ -81,9 +82,7 @@ Plan9_exec(pTHX_ register regexp *r, char *stringarg, register char *strend,
     char *startpos = stringarg;
     bool g = r->intflags & PMf_GLOBAL ? 1 : 0;
 
-    re = r->pprivate;
-
-    memset(match, 0, msize*sizeof(Resub));
+    Zero(match, 50, Resub);
 
     ret = regexec(re, stringarg, match, msize);
 
@@ -92,7 +91,7 @@ Plan9_exec(pTHX_ register regexp *r, char *stringarg, register char *strend,
         return 0;
 
     /*
-     * in C<< s/// >> or C<< m// >>
+     * in C<< s///g >> or C<< m//g >>
      */
     if (g) {
         r->startp[0] = stringarg - strbeg;

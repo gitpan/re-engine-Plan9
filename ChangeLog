@@ -1,3 +1,10 @@
+2007-03-23 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.03)
+
+	* Plan9.pm: Re-added the bug section
+	* Plan9.xs: Use Zero() instead of memset()
+	* t/capture: Added failing /g capture tests
+	* t/s.t: Added failing s///ge test using captures
+
 2007-03-23 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.02)
 
 	* Plan9.xs: Make s/// work

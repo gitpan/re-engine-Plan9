@@ -1,7 +1,5 @@
 use strict;
-
-#sub is { shift eq shift }
-use Test::More tests => 3;
+use Test::More tests => 4;
 use re::engine::Plan9;
 
 my $_;
@@ -18,4 +16,11 @@ $_ = "aabbc";
 s/..//g;
 is($_, 'c');
 
+$_ = "abc";
+s/./1+1/eg;
+is($_, "222");
+
+$_ = "123";
+s/(.)/$1+1/eg;
+is($_, "234");
 
