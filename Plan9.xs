@@ -63,7 +63,7 @@ Plan9_comp(pTHX_ const SV * const pattern, const U32 flags)
 }
 
 I32
-Plan9_exec(pTHX_ REGEXP *rx, char *stringarg, char *strend,
+Plan9_exec(pTHX_ REGEXP * const rx, char *stringarg, char *strend,
            char *strbeg, I32 minend, SV * sv,
            void *data, U32 flags)
 {
@@ -84,14 +84,18 @@ Plan9_exec(pTHX_ REGEXP *rx, char *stringarg, char *strend,
     ret = regexec(re, stringarg, match, NSUBEXP);
 
     /* Explicitly documented to return 1 on success */
-    if (ret != 1) 
+    if (ret != 1) {
+        Safefree(match);
         return 0;
+    }
 
     /* Populate the match buffers, starting with $& */
     for (i = 0; match[i].s.sp; i++) {
         rx->offs[i].start = match[i].s.sp - strbeg;
         rx->offs[i].end   = match[i].e.ep - strbeg;
     }
+
+    Safefree(match);
 
     /* Now that we actually know nparens set it to the currect value
        so split and //g will work */
@@ -129,7 +133,7 @@ Plan9_free(pTHX_ REGEXP * const rx)
 }
 
 void *
-Plan9_dupe(pTHX_ REGEXP * rx, CLONE_PARAMS *param)
+Plan9_dupe(pTHX_ REGEXP * const rx, CLONE_PARAMS *param)
 {
 	PERL_UNUSED_ARG(param);
     Reprog * re;

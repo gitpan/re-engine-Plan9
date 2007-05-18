@@ -159,4 +159,3 @@ t/subexp.t
 t/subst-loop.t
 t/subst.t
 t/synopsis.t
-TODO

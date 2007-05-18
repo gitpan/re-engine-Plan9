@@ -1,5 +1,5 @@
-use strict;
+use Test::More tests => 2;
 
-use Test::More tests => 1;
-
-use_ok 're::engine::Plan9';
+my $pkg = 're::engine::Plan9';
+use_ok $pkg;
+isa_ok(bless([] => $pkg), 'Regexp');

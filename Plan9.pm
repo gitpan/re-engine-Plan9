@@ -7,7 +7,7 @@ our @ISA = 'Regexp';
 
 BEGIN
 {
-    $VERSION = '0.05';
+    $VERSION = '0.06';
     XSLoader::load __PACKAGE__, $VERSION;
 }
 
@@ -46,7 +46,7 @@ Replaces perl's regex engine in a given lexical scope with Plan 9
 regular expression provided by libregexp9. libregexp9 and the libfmt
 and libutf it depends on from Plan 9 are shipped with the module.
 
-The C</s>> modifier causes C<.> to match a newline (C<regcompnl>) and
+The C</s> modifier causes C<.> to match a newline (C<regcompnl>) and
 the C</x> modifier allegedly causes all characters to be treated
 literally (C<regcomplit>), see regexp9(3). The engine will C<croak> if
 it's given other modifier.

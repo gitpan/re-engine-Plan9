@@ -1,4 +1,15 @@
+2007-05-18 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.06)
+
+	* Plan9.pm: Fixed typo in POD (spotted by wolverian)
+	* Plan9.xs: Plugged match memory leak
+	* Plan9.xs: const on Plan9_exec & Plan9_dupe prototypes
+	* t/00-compile.t: Test that the object isa Regexp
+	* t/re_tests: Uncommented a lot more tests, now running (approx)
+	              everything it can
+	* TODO: Removed
+	
 2007-05-18 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.05)
+
 	* t/capture.t: A test here was actually testing for broken behavior
 	* Plan.xs: split // now works after a discussion with The Bear
 	* Plan.pm: No more BUGS section
