@@ -35,4 +35,4 @@ unless ("aoeuhtns" =~ /(.)(.)(.)(.)/g) {
 
 my ($a, $b) = "ab" =~ /(.)/g;
 is($a, "a");
-is($b, undef);
+is($b, "b");

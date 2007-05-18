@@ -93,8 +93,11 @@ Plan9_exec(pTHX_ REGEXP *rx, char *stringarg, char *strend,
         rx->offs[i].end   = match[i].e.ep - strbeg;
     }
 
-    /* Mark the rest as unpopulated, we wouldn't have to loop through
-     * the whole thing if nparens wasn't always == NSUBEXP */
+    /* Now that we actually know nparens set it to the currect value
+       so split and //g will work */
+    rx->nparens = i - 1;
+
+    /* Mark the rest as unpopulated */
     for (; i <= NSUBEXP; i++) {
         rx->offs[i].start = -1;
         rx->offs[i].end   = -1;

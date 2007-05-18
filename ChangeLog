@@ -1,3 +1,8 @@
+2007-05-18 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.05)
+	* t/capture.t: A test here was actually testing for broken behavior
+	* Plan.xs: split // now works after a discussion with The Bear
+	* Plan.pm: No more BUGS section
+	
 2007-05-18 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.04)
 
 	* Plan9.xs: s/// now works, split // still doesn't

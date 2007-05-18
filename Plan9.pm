@@ -7,7 +7,7 @@ our @ISA = 'Regexp';
 
 BEGIN
 {
-    $VERSION = '0.04';
+    $VERSION = '0.05';
     XSLoader::load __PACKAGE__, $VERSION;
 }
 
@@ -58,13 +58,6 @@ regerror(3).
 
 The Plan 9 engine only supports 32 capture buffers, consequently match
 variables only go up to C<$31> (C<$&> is number zero).
-
-=head1 BUGS
-
-Due to 32 capture buffers always being allocated C<split> will put 32
-C<undef> values between each of its return values (captures will chop
-off undefs at the beginning of this list). Expect a dirty hack around
-this in a future release.
 
 =head1 SEE ALSO
 
