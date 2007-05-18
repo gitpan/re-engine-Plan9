@@ -6,5 +6,5 @@ use re::engine::Plan9;
 
 my $re = qr/aoeu/;
 
-is(ref $re, "Regexp");
+isa_ok($re, "re::engine::Plan9");
 is("$re", "aoeu");

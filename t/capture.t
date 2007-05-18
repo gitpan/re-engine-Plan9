@@ -11,18 +11,14 @@ unless ("eep aoeu 420 eek" =~ /(.)(.)(.)(.) ([0-9]+)/) {
     is($', " eek");
     is($&, "aoeu 420", '$&');
 
-    is($1, "a");
-    is($2, "o");
-    is($3, "e");
-    is($4, "u");
-    is($5, "420");
-    is($6, undef);
-    is($640, undef);
+    is($1, "a", '$1 = a');
+    is($2, "o", '$2 = o');
+    is($3, "e", '$3 = e');
+    is($4, "u", '$4 = u');
+    is($5, "420", '$5 = 420');
+    is($6, undef, '$6 = undef');
+    is($640, undef, '$640 = undef');
 }
-
-my ($a, $b) = "ab" =~ /(.)/g;
-is($a, "a");
-is($b, "b");
 
 unless ("aoeuhtns" =~ /(.)(.)(.)(.)/g) {
     fail "didn't match";
@@ -31,12 +27,12 @@ unless ("aoeuhtns" =~ /(.)(.)(.)(.)/g) {
     is($2, "o");
     is($3, "e");
     is($4, "u");
-    is($5, "h");
-    is($6, "t");
-    is($7, "n");
-    is($8, "s");
+    is($5, undef);
+    is($6, undef);
+    is($7, undef);
+    is($8, undef);
 }
 
-
-
-
+my ($a, $b) = "ab" =~ /(.)/g;
+is($a, "a");
+is($b, undef);

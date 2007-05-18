@@ -1,3 +1,18 @@
+2007-05-18 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.04)
+
+	* Plan9.xs: s/// now works, split // still doesn't
+	* Plan9.xs: Thread support, untested but should work
+	* t/s.t: plan 5 tests, not 4
+	* t/pathological.t: Test for speed on pathological regexes
+	* t/re_tests, t/regexp.t: Regexp tests from perl core, commented
+	                          out those that don't apply
+	* t/subst.t: limited tests for s/// from core
+	* t/subst-loop.t: Failing test for subst loop
+	* t/s.t: 5 more tests for s/// added during debugging
+	* t/capture.t: More tests for captures
+	* t/split.t: Failing test for split behavior
+	* t/subexp.t: Test for the maximum number of subexpressions
+
 2007-03-23 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.03)
 
 	* Plan9.pm: Re-added the bug section

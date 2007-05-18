@@ -6,161 +6,146 @@
 #include <fmt.h>
 #include <regexp9.h>
 
-#define SAVEPVN(p,n) ((p) ? savepvn(p,n) : NULL)
+#include "Plan9.h"
 
-START_EXTERN_C
-
-EXTERN_C const regexp_engine engine_plan9;
-
-END_EXTERN_C
-
-regexp *
-Plan9_comp(pTHX_ char *exp, char *xend, PMOP *pm)
+REGEXP *
+Plan9_comp(pTHX_ const SV * const pattern, const U32 flags)
 {
-    register regexp *r;
-    register Reprog *re;
+    REGEXP * rx;
+    Reprog * re;
+    STRLEN plen;
+    char*  exp = SvPV((SV*)pattern, plen);
+    char* xend = exp + plen;
 
-    /* regex structure for perl */
-    Newxz(r,1,regexp);
+    /* REGEX structure for perl */
+    Newxz(rx, 1, REGEXP);
 
-    /* have the regex handled by the Plan9 engine */
-    r->engine = &engine_plan9;
+    rx->refcnt = 1;
+    rx->extflags = flags; /* ->intflags not used */
+    rx->engine = &engine_plan9;
 
-    /* Store the initial flags */
-    r->intflags = pm->op_pmflags;
+    /* Precompiled regexp for pp_regcomp to use */
+    rx->prelen = (I32)plen;
+    rx->precomp = SAVEPVN(exp, rx->prelen);
 
-    /* don't destroy us! */
-    r->refcnt = 1;
+    /* qr// stringification, reuse the space */
+    rx->wraplen = rx->prelen;
+    rx->wrapped = (char *)rx->precomp; /* from const char* */
 
-    /* Preserve a copy of the original pattern */
-    r->prelen = xend - exp;
-    r->precomp = SAVEPVN(exp, r->prelen);
+    /* Catch invalid modifiers, the rest of the flags are ignored */
+    if (flags & (RXf_PMf_MULTILINE|RXf_PMf_FOLD|RXf_PMf_KEEPCOPY))
+        if (flags & RXf_PMf_MULTILINE) /* /m */
+            croak("The `m' modifier is not supported by re::engine::Plan9");
+        else if (flags & RXf_PMf_FOLD) /* /i */
+            croak("The `i' modifier is not supported by re::engine::Plan9");
+        else if (flags & RXf_PMf_KEEPCOPY) /* /p */
+            croak("The `p' modifier is not supported by re::engine::Plan9");
 
-    /* Set up qr// stringification to be equivalent to the supplied
-     * pattern
-     */
-    r->wraplen = r->prelen;
-    Newx(r->wrapped, r->wraplen, char);
-    Copy(r->precomp, r->wrapped, r->wraplen, char);
-
-    /* Store the flags as perl expects them */
-    r->extflags = pm->op_pmflags & RXf_PMf_COMPILETIME;
-
-    if (r->intflags & PMf_EXTENDED) 
-        re = regcomplit(r->precomp);  /* /x */
-    if (r->intflags & PMf_SINGLELINE)
-        re = regcompnl(r->precomp);   /* /s */
+    /* Modifiers valid, compile with the requested variant */
+    if (flags & PMf_EXTENDED) /* /x */
+        re = regcomplit(exp);
+    if (flags & PMf_SINGLELINE) /* /s */
+        re = regcompnl(exp);
     else
-        re = regcomp(r->precomp);     /* / */
+        re = regcomp(exp); /* / */
 
     if (re == 0)
-        croak("Error in regcomp");
+        croak("Internal error in Plan 9 `regcomp'");
 
-    /* Save our re */
-    r->pprivate = re;
+    /* Save for use in Plan9_exec */
+    rx->pprivate = re;
 
-    /* Tell perl how many match vars we have and allocate space for
-     * them, at least one is always allocated for $&
-     */
-    r->nparens = 50;
-    Newxz(r->startp, 1+(U32)50, I32);
-    Newxz(r->endp, 1+(U32)50, I32);
+    /* We always allocate 32 buffers */
+    rx->nparens = NSUBEXP;
+    Newxz(rx->offs, NSUBEXP + 1, regexp_paren_pair);
 
-    return r;
+    return rx;
 }
 
 I32
-Plan9_exec(pTHX_ register regexp *r, char *stringarg, register char *strend,
-                  char *strbeg, I32 minend, SV *sv, void *data, U32 flags)
+Plan9_exec(pTHX_ REGEXP *rx, char *stringarg, char *strend,
+           char *strbeg, I32 minend, SV * sv,
+           void *data, U32 flags)
 {
-    register const Reprog *re = r->pprivate;
-    Resub match[50];
-    int msize = 50;
+    Reprog *re = rx->pprivate;
+    Resub *match;;
     int ret;
     I32 i;
     char *s, *e;
-    char *startpos = stringarg;
-    bool g = r->intflags & PMf_GLOBAL ? 1 : 0;
 
-    Zero(match, 50, Resub);
+    Newxz(match, NSUBEXP, Resub);
 
-    ret = regexec(re, stringarg, match, msize);
+    rx->subbeg = strbeg;
+    rx->sublen = strend - strbeg;
+
+    match[0].s.sp = stringarg;
+    match[0].e.ep = stringarg + (strend - stringarg);
+    
+    ret = regexec(re, stringarg, match, NSUBEXP);
 
     /* Explicitly documented to return 1 on success */
     if (ret != 1) 
         return 0;
 
-    /*
-     * in C<< s///g >> or C<< m//g >>
-     */
-    if (g) {
-        r->startp[0] = stringarg - strbeg;
-        r->endp[0]   = r->startp[0] + (match[0].e.ep - match[0].s.sp);
+    /* Populate the match buffers, starting with $& */
+    for (i = 0; match[i].s.sp; i++) {
+        rx->offs[i].start = match[i].s.sp - strbeg;
+        rx->offs[i].end   = match[i].e.ep - strbeg;
     }
 
-    /*
-     * Don't mess with startp/endp 0 under /g
-     */
-    for (i = g ? 1 : 0; match[i].s.sp; i++) {
-        s = match[i].s.sp;
-        e = match[i].e.ep;
-
-        r->startp[i] = s - stringarg;
-        r->endp[i] = e - stringarg;
+    /* Mark the rest as unpopulated, we wouldn't have to loop through
+     * the whole thing if nparens wasn't always == NSUBEXP */
+    for (; i <= NSUBEXP; i++) {
+        rx->offs[i].start = -1;
+        rx->offs[i].end   = -1;
     }
 
-    /* Tell perl to stop here */
-    r->startp[i] = -1;
-    r->endp[i]   = -1;
-
-    r->sublen = strend-strbeg;
-    r->subbeg = savepvn(strbeg,r->sublen);
-
-    /* matched */
+    /* Matched! */
     return 1;
 }
 
 char *
-Plan9_intuit(pTHX_ regexp *prog, SV *sv, char *strpos,
-                     char *strend, U32 flags, re_scream_pos_data *data)
+Plan9_intuit(pTHX_ REGEXP * const rx, SV * sv, char *strpos,
+             char *strend, U32 flags, re_scream_pos_data *data)
 {
+	PERL_UNUSED_ARG(rx);
     return NULL;
 }
 
 SV *
-Plan9_checkstr(pTHX_ regexp *prog)
+Plan9_checkstr(pTHX_ REGEXP * const rx)
 {
+	PERL_UNUSED_ARG(rx);
     return NULL;
 }
 
 void
-Plan9_free(pTHX_ struct regexp *r)
+Plan9_free(pTHX_ REGEXP * const rx)
 {
-    free(r->pprivate);
+    free(rx->pprivate);
 }
 
 void *
-Plan9_dupe(pTHX_ const regexp *r, CLONE_PARAMS *param)
+Plan9_dupe(pTHX_ REGEXP * rx, CLONE_PARAMS *param)
 {
-    return r->pprivate;
+	PERL_UNUSED_ARG(param);
+    Reprog * re;
+    Copy(rx->pprivate, re, 1, Reprog);
+    return re;
 }
 
-const regexp_engine engine_plan9 = {
-        Plan9_comp,
-        Plan9_exec,
-        Plan9_intuit,
-        Plan9_checkstr,
-        Plan9_free,
-        Perl_reg_numbered_buff_get,
-        Perl_reg_named_buff_get,
-#if defined(USE_ITHREADS)        
-        Plan9_dupe,
-#endif
-};
+SV *
+Plan9_package(pTHX_ REGEXP * const rx)
+{
+	PERL_UNUSED_ARG(rx);
+	return newSVpvs("re::engine::Plan9");
+}
 
 MODULE = re::engine::Plan9	PACKAGE = re::engine::Plan9
+PROTOTYPES: ENABLE
 
 void
-get_plan9_engine()
+ENGINE(...)
+PROTOTYPE:
 PPCODE:
     XPUSHs(sv_2mortal(newSViv(PTR2IV(&engine_plan9))));

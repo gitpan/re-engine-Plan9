@@ -1,25 +1,25 @@
 package re::engine::Plan9;
 use 5.009005;
-use strict;
-use XSLoader;
-use vars qw($VERSION);
+use XSLoader ();
+
+# All engines should subclass the core Regexp package
+our @ISA = 'Regexp';
 
 BEGIN
 {
-    $VERSION = '0.03';
+    $VERSION = '0.04';
     XSLoader::load __PACKAGE__, $VERSION;
 }
 
-use constant PLAN9_ENGINE => get_plan9_engine();
-
 sub import
 {
-    $^H{regcomp} = PLAN9_ENGINE;
+    $^H{regcomp} = ENGINE;
 }
 
 sub unimport
 {
-    delete $^H{regcomp} if $^H{regcomp} == PLAN9_ENGINE;
+    delete $^H{regcomp}
+        if $^H{regcomp} == ENGINE;
 }
 
 1;
@@ -28,7 +28,7 @@ __END__
 
 =head1 NAME
 
-re::engine::Plan9 - Plan9 regular expression engine
+re::engine::Plan9 - Plan 9 regular expression engine
 
 =head1 SYNOPSIS
 
@@ -42,31 +42,29 @@ re::engine::Plan9 - Plan9 regular expression engine
 
 =head1 DESCRIPTION
 
-Replaces perl's regexes in a given lexical scope with Plan9 regular
-expression provided by libregexp9. libregexp9 and the libraries it
-depends on are shipped with the module.
+Replaces perl's regex engine in a given lexical scope with Plan 9
+regular expression provided by libregexp9. libregexp9 and the libfmt
+and libutf it depends on from Plan 9 are shipped with the module.
 
-The C</s>> flag causes C<.> to match a newline (C<regcompnl>) and the
-C</x> flag allegedly causes all characters to be treated literally
-(C<regcomplit>), see regexp9(3). No other flags have special meaning
-to this engine.
+The C</s>> modifier causes C<.> to match a newline (C<regcompnl>) and
+the C</x> modifier allegedly causes all characters to be treated
+literally (C<regcomplit>), see regexp9(3). The engine will C<croak> if
+it's given other modifier.
 
 If an invalid pattern is supplied perl will die with an error from
 regerror(3).
 
 =head1 CAVEATS
 
-The Plan 9 engine expects the user to supply a pre-allocated buffer to
-C<regexec> to hold match variables, however it provides no way to know
-how many match variables the pattern needs. Currently 50 match
-variables are allocated for every pattern match (includes C<< $& >> so
-they go up to C<< $49 >>). Patches that fix the supplied libregexp9 so
-that it provides this information to its caller welcome.
+The Plan 9 engine only supports 32 capture buffers, consequently match
+variables only go up to C<$31> (C<$&> is number zero).
 
 =head1 BUGS
 
-Some of the semantics of C<< //g >> and C<< s/// >> are broken, see
-failing tests for reference.
+Due to 32 capture buffers always being allocated C<split> will put 32
+C<undef> values between each of its return values (captures will chop
+off undefs at the beginning of this list). Expect a dirty hack around
+this in a future release.
 
 =head1 SEE ALSO
 

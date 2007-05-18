@@ -13,6 +13,8 @@ use re::engine::Plan9;
     : fail ". didn't match \\n";
 
 # /x
+#ok("a?" !~ /a?/x);
+#ok("$^" =~ /$^/x);
 
 # XXX: How do I test this? / seems to eqv /x
 #q(*+?[]()|\^$) =~ /*+?[]()|\^$)/x;

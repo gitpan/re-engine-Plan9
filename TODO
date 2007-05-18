@@ -1,0 +1,3 @@
+Implement qr//->sub("(foo)", '\1bar') # => foobar
+
+Test for flags, including regcomplit
