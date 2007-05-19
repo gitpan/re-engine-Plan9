@@ -148,6 +148,7 @@ Plan9.xs
 t/00-compile.t
 t/capture.t
 t/flags.t
+t/import.t
 t/match.t
 t/pathological.t
 t/qr.t
@@ -159,3 +160,4 @@ t/subexp.t
 t/subst-loop.t
 t/subst.t
 t/synopsis.t
+t/unimport.t
