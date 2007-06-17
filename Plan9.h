@@ -27,7 +27,8 @@ const regexp_engine engine_plan9 = {
     Perl_reg_numbered_buff_fetch,
     Perl_reg_numbered_buff_store,
     Perl_reg_numbered_buff_length,
-    Perl_reg_named_buff_fetch,
+    Perl_reg_named_buff,
+    Perl_reg_named_buff_iter,
     Plan9_package,
 #if defined(USE_ITHREADS)        
     Plan9_dupe,

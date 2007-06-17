@@ -115,7 +115,12 @@ char *
 Plan9_intuit(pTHX_ REGEXP * const rx, SV * sv, char *strpos,
              char *strend, U32 flags, re_scream_pos_data *data)
 {
-	PERL_UNUSED_ARG(rx);
+    PERL_UNUSED_ARG(rx);
+    PERL_UNUSED_ARG(sv);
+    PERL_UNUSED_ARG(strpos);
+    PERL_UNUSED_ARG(strend);
+    PERL_UNUSED_ARG(flags);
+    PERL_UNUSED_ARG(data);
     return NULL;
 }
 
