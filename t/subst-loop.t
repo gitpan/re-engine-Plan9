@@ -1,8 +1,10 @@
-use strict;
-use Test::More skip_all => "TODO";
+#use Test::More tests => 2;
+use Test::More skip_all
+    => "return 0 if stringarg == strend in Plan9_exec makes this pass but"
+       . " fails others, find a real solution";
 use re::engine::Plan9;
 
-$_ = 'x' x 20; 
+$_ = 'xxx'; 
 $snum = s/([0-9]*|x)/<$1>/g; 
-$foo = '<>' . ('<x><>' x 20) ;
-ok( $_ eq $foo && $snum == 41 );
+is($_, "<x><x><x>");
+is($snum, 3);

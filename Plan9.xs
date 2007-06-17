@@ -16,12 +16,20 @@ Plan9_comp(pTHX_ const SV * const pattern, const U32 flags)
     STRLEN plen;
     char*  exp = SvPV((SV*)pattern, plen);
     char* xend = exp + plen;
+    U32 extflags = flags;
+
+    /* C<split " ">, bypass the Plan 9 engine alltogether and act as perl does */
+    if (flags & RXf_SKIPWHITE)
+        extflags |= RXf_WHITE;
+    /* RXf_START_ONLY - Have C<split /^/> split on newlines */
+    else if (plen == 1 && exp[0] == '^')
+        extflags |= RXf_START_ONLY;
 
     /* REGEX structure for perl */
     Newxz(rx, 1, REGEXP);
 
     rx->refcnt = 1;
-    rx->extflags = flags; /* ->intflags not used */
+    rx->extflags = extflags;
     rx->engine = &engine_plan9;
 
     /* Precompiled regexp for pp_regcomp to use */
@@ -79,7 +87,7 @@ Plan9_exec(pTHX_ REGEXP * const rx, char *stringarg, char *strend,
     rx->sublen = strend - strbeg;
 
     match[0].s.sp = stringarg;
-    match[0].e.ep = stringarg + (strend - stringarg);
+    match[0].e.ep = strend;
     
     ret = regexec(re, stringarg, match, NSUBEXP);
 
@@ -127,7 +135,7 @@ Plan9_intuit(pTHX_ REGEXP * const rx, SV * sv, char *strpos,
 SV *
 Plan9_checkstr(pTHX_ REGEXP * const rx)
 {
-	PERL_UNUSED_ARG(rx);
+    PERL_UNUSED_ARG(rx);
     return NULL;
 }
 
@@ -140,7 +148,7 @@ Plan9_free(pTHX_ REGEXP * const rx)
 void *
 Plan9_dupe(pTHX_ REGEXP * const rx, CLONE_PARAMS *param)
 {
-	PERL_UNUSED_ARG(param);
+    PERL_UNUSED_ARG(param);
     Reprog * re;
     Copy(rx->pprivate, re, 1, Reprog);
     return re;
@@ -149,11 +157,11 @@ Plan9_dupe(pTHX_ REGEXP * const rx, CLONE_PARAMS *param)
 SV *
 Plan9_package(pTHX_ REGEXP * const rx)
 {
-	PERL_UNUSED_ARG(rx);
-	return newSVpvs("re::engine::Plan9");
+    PERL_UNUSED_ARG(rx);
+    return newSVpvs("re::engine::Plan9");
 }
 
-MODULE = re::engine::Plan9	PACKAGE = re::engine::Plan9
+MODULE = re::engine::Plan9  PACKAGE = re::engine::Plan9
 PROTOTYPES: ENABLE
 
 void
