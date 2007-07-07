@@ -34,6 +34,7 @@ libfmt/Make.FreeBSD-386
 libfmt/Make.HP-UX-9000
 libfmt/Make.Linux-386
 libfmt/Make.Linux-power
+libfmt/Make.Linux-x86_64
 libfmt/Make.NetBSD-386
 libfmt/Make.OpenBSD-386
 libfmt/Make.OSF1-alpha
@@ -75,6 +76,7 @@ libregexp/Make.FreeBSD-386
 libregexp/Make.HP-UX-9000
 libregexp/Make.Linux-386
 libregexp/Make.Linux-power
+libregexp/Make.Linux-x86_64
 libregexp/Make.NetBSD-386
 libregexp/Make.OpenBSD-386
 libregexp/Make.OSF1-alpha
@@ -103,6 +105,7 @@ libutf/Make.FreeBSD-386
 libutf/Make.HP-UX-9000
 libutf/Make.Linux-386
 libutf/Make.Linux-power
+libutf/Make.Linux-x86_64
 libutf/Make.NetBSD-386
 libutf/Make.OpenBSD-386
 libutf/Make.OSF1-alpha

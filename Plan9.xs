@@ -19,11 +19,16 @@ Plan9_comp(pTHX_ const SV * const pattern, const U32 flags)
     U32 extflags = flags;
 
     /* C<split " ">, bypass the Plan 9 engine alltogether and act as perl does */
-    if (flags & RXf_SKIPWHITE)
-        extflags |= RXf_WHITE;
+    if (flags & RXf_SPLIT && plen == 1 && exp[0] == ' ')
+        extflags |= (RXf_SKIPWHITE|RXf_WHITE);
+
     /* RXf_START_ONLY - Have C<split /^/> split on newlines */
-    else if (plen == 1 && exp[0] == '^')
+    if (plen == 1 && exp[0] == '^')
         extflags |= RXf_START_ONLY;
+
+    /* RXf_WHITE - Have C<split /\s+/> split on whitespace */
+    else if (plen == 3 && strnEQ("\\s+", exp, 3))
+        extflags |= RXf_WHITE;
 
     /* REGEX structure for perl */
     Newxz(rx, 1, REGEXP);
@@ -161,7 +166,7 @@ Plan9_package(pTHX_ REGEXP * const rx)
     return newSVpvs("re::engine::Plan9");
 }
 
-MODULE = re::engine::Plan9  PACKAGE = re::engine::Plan9
+MODULE = re::engine::Plan9 PACKAGE = re::engine::Plan9
 PROTOTYPES: ENABLE
 
 void

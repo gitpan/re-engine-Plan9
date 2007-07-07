@@ -1,3 +1,13 @@
+2007-07-07  Ævar Arnfjörð Bjarmason  <avar@cpan.org> (0.10)
+
+	* Plan9.xs: Updated the split() special cases described to match blead
+	* t/split.t: More tests for the above, taken from re::engine::PCRE
+	* Plan9.h: Brought up to date with blead
+	* Makefile.PL: { use utf8 } on the non-ASCII author name
+	* inc: Updated to Module::Install 0.67
+	* lib*: patch lib[fmt|utf|regexp] to build on Linux-x86_64 (patch sent
+	        to Russ Cox)
+
 2007-06-17 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.09)
 
 	* Plan9.pm: Remove irrelevant link
@@ -6,7 +16,7 @@
 	* Plan9.xs: M-x untabify
 	* t/split.t: Test for the above
 	* t/subst-loop.t: Add a note, still failing
-	
+
 2007-06-17 Ævar Arnfjörð Bjarmason <avar@cpan.org> (0.08)
 
 	* Plan9.xs: PERL_UNUSED_ARG() for all Plan9_intuit arguments 

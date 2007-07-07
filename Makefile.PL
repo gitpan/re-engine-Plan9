@@ -5,7 +5,7 @@ name 're-engine-Plan9';
 
 perl_version '5.009005';
 
-author 'Ævar Arnfjörð Bjarmason <avar@cpan.org>';
+{ use utf8; author 'Ævar Arnfjörð Bjarmason <avar@cpan.org>'; }
 abstract_from 'Plan9.pm';
 license_from 'Plan9.pm';
 

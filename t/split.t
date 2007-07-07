@@ -1,5 +1,5 @@
 use strict;
-use Test::More tests => 16;
+use Test::More tests => 20;
 use re::engine::Plan9;
 
 {
@@ -7,16 +7,6 @@ use re::engine::Plan9;
     is($a, "a");
     is($b, ":");
     is($c, "b");
-}
-
-# / /, not a special case
-{
-    my ($a, $b, $c, $d, $e) = split / /, " foo bar ";
-    is($a, "");
-    is($b, "foo");
-    is($c, "bar");
-    is($d, "");
-    is($e, undef);
 }
 
 # The " " special case
@@ -37,4 +27,21 @@ use re::engine::Plan9;
     is($c, "c\n");
 }
 
-# The /\s+/ optimization isn't used
+# The /\s+/ special case
+{
+    my ($a, $b, $c, $d) = split /\s+/, "a b  c\t d";
+    is($a, "a");
+    is($b, "b");
+    is($c, "c");
+    is($d, "d");
+}
+
+# / /, not a special case
+{
+    my ($a, $b, $c, $d, $e) = split / /, " x y ";
+    is($a, "");
+    is($b, "x");
+    is($c, "y");
+    is($d, "");
+    is($e, undef);
+}
