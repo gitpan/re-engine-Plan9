@@ -7,7 +7,7 @@ our @ISA = 'Regexp';
 
 BEGIN
 {
-    $VERSION = '0.10';
+    $VERSION = '0.11';
     XSLoader::load __PACKAGE__, $VERSION;
 }
 
@@ -76,11 +76,6 @@ L<http://swtch.com/plan9port/unix/man/regexp93.html>
 L<http://swtch.com/plan9port/unix/>
 
 =back
-
-=head1 THANKS
-
-Rafael Kitover (RKITOVER) for the C<< postamble >> F<Makefile.PL>
-section that builds the Plan 9 libraries at C<< make >> time.
 
 =head1 AUTHOR
 

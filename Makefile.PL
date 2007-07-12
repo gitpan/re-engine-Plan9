@@ -1,11 +1,11 @@
-use strict;
+use utf8;
 use inc::Module::Install;
 
 name 're-engine-Plan9';
 
 perl_version '5.009005';
 
-{ use utf8; author 'Ævar Arnfjörð Bjarmason <avar@cpan.org>'; }
+author 'Ævar Arnfjörð Bjarmason <avar@cpan.org>';
 abstract_from 'Plan9.pm';
 license_from 'Plan9.pm';
 
@@ -13,32 +13,12 @@ license_from 'Plan9.pm';
 build_requires 'XSLoader'   => 0;
 build_requires 'Test::More' => 0; # 5.007003
 
-makemaker_args INC => join ' ', map { "-I$_" } glob 'lib*';
+my @dir = qw(libutf libfmt libregexp);
+makemaker_args DIR => [ @dir ];
+makemaker_args INC => join ' ', map { "-I$_" } @dir;
 makemaker_args LDDLFLAGS => '-shared lib*/*.o';
-makemaker_args clean => {
-    FILES => join ' ', map { "$_/*.o $_/*.a" } glob "lib*",
-};
 
 tests 't/*.t';
 
 auto_install;
 WriteAll;
-
-package MY;
-
-sub postamble
-{
-    return <<'END'
-subdirs :: libfmt/libfmt.a libutf/libutf.a libregexp/libregexp9.a
-
-libfmt/libfmt.a:
-	(cd libfmt; $(MAKE))
-
-libutf/libutf.a:
-	(cd libutf; $(MAKE))
-
-libregexp/libregexp9.a:
-	(cd libregexp; $(MAKE))
-
-END
-}

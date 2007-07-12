@@ -1,3 +1,11 @@
+2007-07-12  Ævar Arnfjörð Bjarmason  <avar@cpan.org> (0.11)
+
+	* lib*: Removed the Plan 9 build system and replaced it with
+	        Makefile.PL's in each of the lib* directories. The
+	        software should now port to Windows (and anywhere perl
+	        builds). The removed files are lib*/Make.* and
+	        lib*/Makefile
+
 2007-07-07  Ævar Arnfjörð Bjarmason  <avar@cpan.org> (0.10)
 
 	* Plan9.xs: Updated the split() special cases described to match blead
