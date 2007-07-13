@@ -3,8 +3,8 @@
 ^lib.*/.*\.a$
 
 ^MANIFEST\.bak$
-^Makefile$
-^Makefile\.old$
+Makefile$
+Makefile\.old$
 
 ^contrib
 

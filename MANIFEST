@@ -29,7 +29,6 @@ libfmt/fmtrune.c
 libfmt/fmtstr.c
 libfmt/fmtvprint.c
 libfmt/fprint.c
-libfmt/Makefile
 libfmt/Makefile.PL
 libfmt/nan.h
 libfmt/nan64.c
@@ -60,7 +59,6 @@ libfmt/vseprint.c
 libfmt/vsmprint.c
 libfmt/vsnprint.c
 libregexp/lib9.h
-libregexp/Makefile
 libregexp/Makefile.PL
 libregexp/NOTICE
 libregexp/README
@@ -78,7 +76,6 @@ libregexp/rregsub.c
 libregexp/test.c
 libregexp/test2.c
 libutf/isalpharune.3
-libutf/Makefile
 libutf/Makefile.PL
 libutf/NOTICE
 libutf/plan9.h
