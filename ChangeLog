@@ -1,3 +1,7 @@
+2007-07-16  Ævar Arnfjörð Bjarmason  <avar@cpan.org> (0.13)
+
+	* lib*: Don't make dynamic dynamic libs, this should solve RT#28044
+
 2007-07-13  Ævar Arnfjörð Bjarmason  <avar@cpan.org> (0.12)
 
 	* lib*: Removed lib*/Makefile which accidentally snuck in
