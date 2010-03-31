@@ -1,4 +1,17 @@
 ChangeLog
+LICENSE
+MANIFEST
+META.json
+META.yml
+Plan9.h
+Plan9.xs
+README
+dist.ini
+inc/Plan9MakeMaker.pm
+lib/re/engine/Plan9.pm
+libfmt/Makefile.PL
+libfmt/NOTICE
+libfmt/README
 libfmt/charstod.c
 libfmt/dofmt.c
 libfmt/dorfmt.c
@@ -17,15 +30,12 @@ libfmt/fmtrune.c
 libfmt/fmtstr.c
 libfmt/fmtvprint.c
 libfmt/fprint.c
-libfmt/Makefile.PL
 libfmt/nan.h
 libfmt/nan64.c
-libfmt/NOTICE
 libfmt/plan9.h
 libfmt/pow10.c
 libfmt/print.3
 libfmt/print.c
-libfmt/README
 libfmt/runefmtstr.c
 libfmt/runeseprint.c
 libfmt/runesmprint.c
@@ -46,10 +56,10 @@ libfmt/vfprint.c
 libfmt/vseprint.c
 libfmt/vsmprint.c
 libfmt/vsnprint.c
-libregexp/lib9.h
 libregexp/Makefile.PL
 libregexp/NOTICE
 libregexp/README
+libregexp/lib9.h
 libregexp/regaux.c
 libregexp/regcomp.c
 libregexp/regcomp.h
@@ -63,11 +73,11 @@ libregexp/rregexec.c
 libregexp/rregsub.c
 libregexp/test.c
 libregexp/test2.c
-libutf/isalpharune.3
 libutf/Makefile.PL
 libutf/NOTICE
-libutf/plan9.h
 libutf/README
+libutf/isalpharune.3
+libutf/plan9.h
 libutf/rune.3
 libutf/rune.c
 libutf/runestrcat.3
@@ -93,12 +103,6 @@ libutf/utfnlen.c
 libutf/utfrrune.c
 libutf/utfrune.c
 libutf/utfutf.c
-Makefile.PL
-MANIFEST			This list of files
-MANIFEST.SKIP
-Plan9.h
-Plan9.pm
-Plan9.xs
 t/00-compile.t
 t/capture.t
 t/flags.t
@@ -108,6 +112,8 @@ t/pathological.t
 t/qr.t
 t/re_tests
 t/regexp.t
+t/release-pod-coverage.t
+t/release-pod-syntax.t
 t/s.t
 t/split.t
 t/subexp.t
@@ -115,4 +121,3 @@ t/subst-loop.t
 t/subst.t
 t/synopsis.t
 t/unimport.t
-META.yml                                 Module meta-data (added by MakeMaker)
